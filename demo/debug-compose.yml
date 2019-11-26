@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: debezium/zookeeper:0.9
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+
+  kafka:
+    image: debezium/kafka:0.9
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+
+  mongodb:
+    image: mongo:4.1.7
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_USER=cleanroom
+      - MONGODB_PASSWORD=cleanroom
+
+  mongosetup:
+    image: mongo:4.1.7
+    depends_on:
+      - mongodb
+    volumes:
+      - ./setup-mongodb.sh:/setup-mongodb.sh
+      - ./sampleMembers.json:/sampleMembers.json
+    restart: always
+    entrypoint: [ "bash", "/setup-mongodb.sh" ]
+
+  redis:
+    image: redis:5.0.3
+    ports:
+      - 6379:6379
+
+  oms:
+    image: pega/oms-spring:1
+    ports:
+      - 1234:1234
+    links:
+      - kafka
+      - redis
+    environment:
+      - KAFKA=kafka:9092
+      - REDIS=redis://redis:6379
+      - RESOURCES=member
+
+  etl:
+    image: pega/etl:1
+    links:
+      - kafka
+      - redis
+      - mongodb
+    environment:
+      - REDIS=redis://redis:6379
+      - KAFKA=kafka:9092
+      - MONGO_HOST=mongodb
+      - MONGO_USER=cleanroom
+      - MONGO_PASSWORD=cleanroom
+      - MONGO_DATABASE_NAME=cleanroom
+      - MONGO_AUTHENTICATION_DATABASE=admin

@@ -1,0 +1,14 @@
+{
+  "filter": {
+    "isTrue": {
+      "value": {
+        "field": "data.Member.Address.Address.WheelchairAccess"
+      }
+    }
+  },
+  "order": [
+    {
+      "field": "data.Member.LastName"
+    }
+  ]
+}

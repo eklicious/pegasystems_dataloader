@@ -1,0 +1,23 @@
+BEGIN { FS="\t" }
+
+$1 ~ /^[a-z0-9]/ {
+  tt_put += $2
+  dt_lock += $3
+  tt_lock += $4
+  tt_commit += $5
+  dt_consistent += $6
+  tt_consistent += $7
+}
+
+
+Key     Put Time        Lock Delay      Lock Time       Commit Time     Consistent Delay        Consistent Time
+
+END {
+  printf("Processed %s rows\n", NR);
+  if (NR > 0) printf("Avg put time: %s\n", (tt_put / NR));
+  if (NR > 0) printf("Avg lock delay: %s\n", (dt_lock / NR));
+  if (NR > 0) printf("Avg time to lock: %s\n", (tt_lock / NR));
+  if (NR > 0) printf("Avg time to commit: %s\n", (tt_commit / NR));
+  if (NR > 0) printf("Avg consistent delay: %s\n", (dt_consistent / NR));
+  if (NR > 0) printf("Avg time to consistent: %s\n", (tt_consistent / NR));
+}

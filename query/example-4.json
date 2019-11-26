@@ -1,0 +1,72 @@
+{
+  "filter": {
+    "and": [
+      {
+        "equal": {
+          "left": {
+            "field": "member_policy.data.MemberPolicy.COBPriority"
+          },
+          "right": {
+            "scalar": 3
+          }
+        }
+      },
+      {
+        "equal": {
+          "left": {
+            "field": "data.Member.Gender"
+          },
+          "right": {
+            "scalar": "Female"
+          }
+        }
+      },
+      {
+        "equal": {
+          "left": {
+            "field": "provider.data.Provider.Status"
+          },
+          "right": {
+            "scalar": "Active"
+          }
+        }
+      }
+    ]
+  },
+  "joins": [
+    {
+      "with": {
+        "class": "MemberPolicy",
+        "alias": "member_policy"
+      },
+      "condition": {
+        "equal": {
+          "left": {
+            "field": "data.Member.ID"
+          },
+          "right": {
+            "field": "member_policy.data.MemberPolicy.MemberID"
+          }
+        }
+      },
+      "type": "LEFT"
+    },
+    {
+      "with": {
+        "class": "Provider",
+        "alias": "provider"
+      },
+      "condition": {
+        "equal": {
+          "left": {
+            "field": "member_policy.data.MemberPolicy.PrimaryCarePhysician.ID"
+          },
+          "right": {
+            "field": "provider.data.Provider.ID"
+          }
+        }
+      },
+      "type": "LEFT"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "filter": {
+    "equal": {
+      "left": {
+        "field": "member_policy.data.MemberPolicy.COBPriority"
+      },
+      "right": {
+        "scalar": 3
+      }
+    }
+  },
+  "joins": [
+    {
+      "with": {
+        "class": "MemberPolicy",
+        "alias": "member_policy"
+      },
+      "condition": {
+        "equal": {
+          "left": {
+            "field": "data.Member.ID"
+          },
+          "right": {
+            "field": "member_policy.data.MemberPolicy.MemberID"
+          }
+        }
+      },
+      "type": "LEFT"
+    }
+  ]
+}

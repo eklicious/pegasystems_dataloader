@@ -39,6 +39,12 @@ On your first usage of the scripts, install required libraries:
 
 Generate fake memeber records, one per line, by running:
 
+Note that the fake data expects the following:
+Members ranging from 1-65M
+Providers ranging from 1-1M
+Claims ranging from 1-500M
+Policies ranging from 1-65M
+
 ```
-# python fake-data.py model-tables/member.csv <# of loops of batch inserts> <# of records to batch> <starting member id> "mongodb://<username>:<password>@<shard0>:27017,<shard1>:27017,<shard2>:27017/test?replicaSet=demo-shard-0&ssl=true&authSource=admin" <db name> <collection name> 
+# python fake-data.py model-tables/<model>.csv <# of loops of batch inserts> <# of records to batch> <starting member id> "mongodb://<username>:<password>@<shard0>:27017,<shard1>:27017,<shard2>:27017/test?replicaSet=demo-shard-0&ssl=true&authSource=admin" <db name> <collection name> 
 ```

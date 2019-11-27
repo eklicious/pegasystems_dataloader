@@ -98,12 +98,12 @@ for N in range(0, int(sys.argv[2])): # iterate through the loop count
 
         # To JSON!
         # print("%s\t%s\t%s"%(str(id), str(idempotencyKey), json.dumps(obj, default=ser)))
-        print(json.dumps(obj, default=ser))
+        # print(json.dumps(obj, default=ser))
 
         # Add the object to our members list
         # members.append(json.loads(json.dumps(obj, default=ser)))
         members.append(obj)
 
-    print(members)
+    print("Bulk Insert Iteration: ", N)
     # Now do the bulk insert
     coll.insert_many(members)

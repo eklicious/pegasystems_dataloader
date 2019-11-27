@@ -1,10 +1,11 @@
+import pymongo
+from bson.json_util import loads, dumps
+from bson import json_util
 import csv
 import sys
 import uuid
 import os
 import itertools
-import multiprocessing
-from bson.objectid import ObjectId
 from faker import Faker
 from collections import defaultdict
 import json
@@ -13,12 +14,11 @@ from deepmerge import Merger
 import random
 import re
 
-id_map = defaultdict(int)
 stripProp = lambda str: re.sub(r'\s+', '', (str[0].upper() + str[1:].strip('()')))
 fake = Faker()
-num_records = 0
 
 def ser(o):
+    # This serializer isn't needed anymore as long as we use faker.datetime.datetime instead of datetime.date
     """Customize serialization of types that are not JSON native"""
     if isinstance(o, datetime.date):
         return str(o)
@@ -49,18 +49,28 @@ def zipmerge(the_merger, path, base, nxt):
     """Strategy for deepmerge that will zip merge two lists. Assumes lists of equal length."""
     return [ the_merger.merge(base[i], nxt[i]) for i in range(0, len(base)) ]
 
+baseCounter = int(sys.argv[4])
+id_map = defaultdict(int)
 def ID(key):
-    id_map[key] += 1
-    return key + str(id_map[key])
+    id_map[key] += 1 
+    return key + str(id_map[key]+baseCounter)
 
-def n_loader(range_start,range_end):
-    # A deep merger using our custom list merge strategy.
-    merger = Merger([
-        (dict, "merge"),
-        (list, zipmerge)
-    ], [ "override" ], [ "override" ])
+# A deep merger using our custom list merge strategy.
+merger = Merger([
+    (dict, "merge"),
+    (list, zipmerge)
+], [ "override" ], [ "override" ])
 
-    for N in range(0, range_end): # Generate the numer specified by the user
+# Set up the mdb objects
+client = pymongo.MongoClient(sys.argv[5])
+db = client[sys.argv[6]]
+coll = db[sys.argv[7]]
+
+for N in range(0, int(sys.argv[2])): # iterate through the loop count
+    # instantiate a new list
+    members = []
+
+    for J in range(0, int(sys.argv[3])): # iterate through the bulk insert count 
         # A dictionary that will provide consistent, random list lengths
         counts = defaultdict(lambda: random.randint(1, 5))
         data = {}
@@ -84,49 +94,16 @@ def n_loader(range_start,range_end):
         }
         obj['data'] = data
 
+        # db.members.insert_one(obj)
+
         # To JSON!
-        print("%s\t%s\t%s"%(str(id), str(idempotencyKey), json.dumps(obj, default=ser)))
+        # print("%s\t%s\t%s"%(str(id), str(idempotencyKey), json.dumps(obj, default=ser)))
+        print(json.dumps(obj, default=ser))
 
+        # Add the object to our members list
+        # members.append(json.loads(json.dumps(obj, default=ser)))
+        members.append(obj)
 
-####
-#  BJB - Added for MultiProc
-# Main start function
-####
-def main():
-    print('')
-    num_records = int(sys.argv[2])
-    if len(sys.argv) < 0:
-        print('Error: Insufficient command line parameters provided')
-        print_usage()
-    else:
-        start = datetime.datetime.now()
-        print("#--------------------------------------------------#")
-        print(f'#  Data Load')
-        print(f'#  Start: {start}')
-        print("#--------------------------------------------------#")
-        connection = pymongo.MongoClient(mongodb_url)
-        db = connection[database]
-        cursor = db[restaurants].find({"people" : { "$exists" : False}}) #.limit(3)
-        collection_size = cursor.count()
-        n_cores = 7                # number of splits (logical cores of the CPU-1)
-        #batch_size = round(collection_size/n_cores+0.5)
-        #skips = range(0, n_cores*batch_size, batch_size)
-        skips = range(0, num_procs*batch_size, batch_size)
-
-        processes = [ multiprocessing.Process(target=load_data, args=(skip_n,batch_size)) for skip_n in skips]
-
-    for process in processes:
-        process.start()
-
-    for process in processes:
-        process.join()
-        load_data()
-        print("#--------------------------------------------------#")
-        end = datetime.datetime.now()
-        print(f'#  End: {end} elapsed: {end - start}')
-
-####
-# Main
-####
-if __name__ == '__main__':
-    main()
+    print(members)
+    # Now do the bulk insert
+    coll.insert_many(members)

@@ -37,8 +37,8 @@ On your first usage of the scripts, install required libraries:
 # pip install -r requirements.txt
 ```
 
-Generate 10 fake memeber records, one per line, by running:
+Generate fake memeber records, one per line, by running:
 
 ```
-# python fake-data.py model-tables/member.csv 10
+# python fake-data.py model-tables/member.csv <# of loops of batch inserts> <# of records to batch> <starting member id> "mongodb://<username>:<password>@<shard0>:27017,<shard1>:27017,<shard2>:27017/test?replicaSet=demo-shard-0&ssl=true&authSource=admin" <db name> <collection name> 
 ```

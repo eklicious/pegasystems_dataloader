@@ -46,5 +46,11 @@ Claims ranging from 1-500M
 Policies ranging from 1-65M
 
 ```
-# python fake-data.py model-tables/<model>.csv <# of loops of batch inserts> <# of records to batch> <starting member id> "mongodb://<username>:<password>@<shard0>:27017,<shard1>:27017,<shard2>:27017/test?replicaSet=demo-shard-0&ssl=true&authSource=admin" <db name> <collection name> 
+# python fake-data.py model-tables/<model>.csv <# of loops of batch inserts> <# of records to batch> <starting id> "mongodb://<username>:<password>@<shard0>:27017,<shard1>:27017,<shard2>:27017/test?replicaSet=<replset name>&ssl=true&authSource=admin" <db name> <collection name> 
+```
+
+Here is an example of a utility script to run multiple threads in parallel to load all the data.
+
+```
+# ./fake-data-loader.sh <csv model name without the path of model-tables> <# of parallel threads> <# of loops of batch inserts> <# of records to batch> "mongodb://<username>:<password>@<shard0>:27017,<shard1>:27017,<shard2>:27017/test?replicaSet=<replset name>&ssl=true&authSource=admin" <db name> <collection name>
 ```

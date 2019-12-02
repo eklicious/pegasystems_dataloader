@@ -1,6 +1,6 @@
 // Retrieve
 const MongoClient = require('mongodb').MongoClient;
-const srv = "mongodb+srv://ek:ek@pegasystems-tp2me.mongodb.net/test?retryWrites=true&w=majority";
+const srv = "mongodb+srv://<username>:<password>@<srv>/test?retryWrites=true&w=majority";
 const db = "pegasystems";
 const claimNm = "claim";
 const memberNm = "member";

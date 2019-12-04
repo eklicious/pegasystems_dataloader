@@ -13,6 +13,12 @@ import datetime
 from deepmerge import Merger
 import random
 import re
+'''
+Sample invocation:
+ python3 fake-data.py model-tables/provider.1m.csv 3 5 1000 "mongodb://localhost:27017/test" test_pega providers
+ python3 fake-data.py model-tables/member.6m.csv 3 5 1000 "mongodb://localhost:27017/test" test_pega members
+'''
+
 
 stripProp = lambda str: re.sub(r'\s+', '', (str[0].upper() + str[1:].strip('()')))
 fake = Faker()
@@ -49,10 +55,23 @@ def zipmerge(the_merger, path, base, nxt):
     """Strategy for deepmerge that will zip merge two lists. Assumes lists of equal length."""
     return [ the_merger.merge(base[i], nxt[i]) for i in range(0, len(base)) ]
 
+
+#-------------------- MAIN --------------------------#
+template_file = sys.argv[1]
+num_records = int(sys.argv[2])
+bulk_count = int(sys.argv[3])
 baseCounter = int(sys.argv[4])
+mdb_conn = sys.argv[5]
+database = sys.argv[6]
+collection = sys.argv[7]
 id_map = defaultdict(int)
+# Set up the mdb objects
+client = pymongo.MongoClient(mdb_conn)
+db = client[database]
+coll = db[collection]
+
 def ID(key):
-    id_map[key] += 1 
+    id_map[key] += 1
     return key + str(id_map[key]+baseCounter)
 
 # A deep merger using our custom list merge strategy.
@@ -61,24 +80,21 @@ merger = Merger([
     (list, zipmerge)
 ], [ "override" ], [ "override" ])
 
-# Set up the mdb objects
-client = pymongo.MongoClient(sys.argv[5])
-db = client[sys.argv[6]]
-coll = db[sys.argv[7]]
 
-for N in range(0, int(sys.argv[2])): # iterate through the loop count
+for N in range(0, num_records): # iterate through the loop count
     # instantiate a new list
     members = []
 
-    for J in range(0, int(sys.argv[3])): # iterate through the bulk insert count 
+    for J in range(0, bulk_count): # iterate through the bulk insert count
         # A dictionary that will provide consistent, random list lengths
         counts = defaultdict(lambda: random.randint(1, 5))
         data = {}
-        with open(sys.argv[1]) as csvfile:
+        with open(template_file) as csvfile:
             propreader = csv.reader(itertools.islice(csvfile, 1, None))
             for row in propreader:
                 path = row[0].split('.')
                 partial = procpath(path, counts, row[3])
+                print(partial)
                 # Merge partial trees.
                 data = merger.merge(data, partial)
         data = list(data.values())[0]

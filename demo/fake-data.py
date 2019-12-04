@@ -15,6 +15,7 @@ import random
 import re
 '''
 Sample invocation:
+ python3 fake-data.py model-tables/claim.50m.csv 3 5 1000 "mongodb://localhost:27017/test" test_pega claims
  python3 fake-data.py model-tables/provider.1m.csv 3 5 1000 "mongodb://localhost:27017/test" test_pega providers
  python3 fake-data.py model-tables/member.6m.csv 3 5 1000 "mongodb://localhost:27017/test" test_pega members
 '''
@@ -94,7 +95,7 @@ for N in range(0, num_records): # iterate through the loop count
             for row in propreader:
                 path = row[0].split('.')
                 partial = procpath(path, counts, row[3])
-                print(partial)
+                #print(partial)
                 # Merge partial trees.
                 data = merger.merge(data, partial)
         data = list(data.values())[0]

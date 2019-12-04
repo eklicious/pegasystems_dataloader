@@ -77,7 +77,7 @@ module.exports = {
             // create a random guid claim id
             var uuid = uuidv4();
             // console.log(uuid);
-            var claimTemplate = getClaimTemplate('X-' + uuid);
+            var claimTemplate = getClaimTemplate('X-' + uuid, request.params.id);
             tempCol.insertOne(claimTemplate);
             response.send('added claim: ' + uuid);
         }
@@ -134,11 +134,11 @@ function uuidv4() {
   });
 }
 
-function getClaimTemplate(claimId) {
+function getClaimTemplate(claimId, versionId) {
     return {
     "id" : "c951a546-861d-4b3d-8992-f84e8e7416a1",
     "idempotencyKey" : "00547636-0b58-4233-b4a9-8ea4fc310e0c",
-    "version" : "1",
+    "version" : versionId,
     "type" : "Claim",
     "data" : {
 	"Baseclass" : {

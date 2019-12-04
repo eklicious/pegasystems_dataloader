@@ -1,9 +1,9 @@
 Resource.Property,Property Type,Optional/Required,Generator,Sample Data,Notes about Sample Data,Comments,Developer Comments,Status/State,Change Notes,Maps to HCIF Class.Property,HCIF Base Class,HCIF Release
 Member.ID,String,Required,"ID(""M-"")","""M-"" + Incremental 1- 65 million",,,,Approved,,,,7.21
-Member.lastName,String,Required,fake.last_name(),Random,,,,Approved,,,,7.21
-Member.firstName,String,Optional,fake.first_name(),Random,,,,Approved,,,,7.21
-Member.middleName,String,Optional,fake.first_name(),Random,,,,Approved,,,,7.21
-Member.suffix,String,Optional,fake.suffix(),Random,,,,Approved,,,,7.21
+Member.pyLastName,String,Required,fake.last_name(),Random,,,,Approved,,,,7.21
+Member.pyFirstName,String,Optional,fake.first_name(),Random,,,,Approved,,,,7.21
+Member.pyMiddleName,String,Optional,fake.first_name(),Random,,,,Approved,,,,7.21
+Member.pySuffix,String,Optional,fake.suffix(),Random,,,,Approved,,,,7.21
 Member.Address().name,String,Optional,"fake.random_element(('Main', 'Summer', 'Old'))","Main, Summer, Old",,1 Member can have many addresses. eg: school this would be School Name,,Approved,,,,7.21
 Member.Address().address Line1,String,Optional,fake.street_address(),Random,,,,Approved,,,,7.21
 Member.Address().addressLine2,String,Optional,fake.secondary_address(),Random,,,,Approved,,,,7.21
@@ -60,3 +60,13 @@ Member.BankAccount.BankRoutingNumber,String ,Optional,fake.iban(),Random,,,,Appr
 Member.Employment().EmployeeIdentificationNumber,String,Optional,fake.ssn(),Random,,"1 Member can have many Employments
 Member employee identification number",,Approved,,,,7.21
 Member.Weight,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Member weight,,Approved,,,,7.21
+Member.meta.pxCommitDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Member.meta.pxCreateDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Member.meta.pxCreateOperatorxs,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Member.meta.pxCreateSystemID,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Member.meta.pxSaveDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Member.meta.pxUpdateDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Member.meta.pxUpdateOperator,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Member.meta.pxUpdateOpName,String,Optional,"fake.random_element(('Insert', 'Update', 'Delete'))","Insert, Update, Delete",,,,Approved,,,,7.21
+Member.meta.pxUpdateSystemID,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Member.meta.pxCreateOpName,String,Optional,"fake.random_element(('Insert', 'Update', 'Delete'))","Insert, Update, Delete",,,,Approved,,,,7.21

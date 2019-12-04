@@ -14,3 +14,13 @@ MemberPolicy.primaryCarePhysician().EndDate,date,Optional,fake.future_datetime()
 MemberPolicy.COBPriority,string,Optional,"str(fake.random_int(min=1, max=5))",Random 1-5,,"Order of COB Processing 
 Need to verify Field Name",New,,,,7.21
 MemberPolicy.individualRelationshipCode,string,Required,"fake.random_element(('Subscriber', 'Spouse', 'Significant Other', 'Child', 'Other'))","Subscriber, Spouse, Significant Other, Child, Other",,,Delete,,,,7.21
+MemberPolicy.meta.pxCommitDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+MemberPolicy.meta.pxCreateDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+MemberPolicy.meta.pxCreateOperatorxs,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+MemberPolicy.meta.pxCreateSystemID,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+MemberPolicy.meta.pxSaveDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+MemberPolicy.meta.pxUpdateDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+MemberPolicy.meta.pxUpdateOperator,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+MemberPolicy.meta.pxUpdateOpName,String,Optional,"fake.random_element(('Insert', 'Update', 'Delete'))","Insert, Update, Delete",,,,Approved,,,,7.21
+MemberPolicy.meta.pxUpdateSystemID,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+MemberPolicy.meta.pxCreateOpName,String,Optional,"fake.random_element(('Insert', 'Update', 'Delete'))","Insert, Update, Delete",,,,Approved,,,,7.21

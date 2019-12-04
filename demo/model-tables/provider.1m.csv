@@ -3,8 +3,8 @@ Provider.ID,String,Required,"ID(""P-"")","""P-"" + Incremental 1 - 1 million",,,
 Provider.federalTaxID,String,Optional,fake.ssn(),Random,,,,Approved,,Provider.FederalTaxID,PegaHC-Data-Party-Provider,7.21
 Provider.nationalProviderIdentifier,String,Required,"ID(""NPI-"")","""NPI-"" + Incremental 1 - 1 million",,,,Approved,,Provider.NationalProviderIdentifier,PegaHC-Data-Party-Provider,7.21
 Provider.NPIType,String,Required,"fake.random_element(('Individual', 'Institution'))","Individual, Institution",,,,Approved,,Provider.NPIType,PegaHC-Data-Party-Provider,7.21
-Provider.lastName,String,Required,fake.company(),If Institution then Company Name other Last Name,,Last name can be Organization Name for Facility or Group,,Approved,,Provider.pyLastName,Data-Party,7.21
-Provider.firstName,String,Optional,fake.last_name(),if Instituion then Blank otherwise Random,,,,Approved,,Provider.pyFirstName,Data-Party,7.21
+Provider.pyLastName,String,Required,fake.company(),If Institution then Company Name other Last Name,,Last name can be Organization Name for Facility or Group,,Approved,,Provider.pyLastName,Data-Party,7.21
+Provider.pyFirstName,String,Optional,fake.last_name(),if Instituion then Blank otherwise Random,,,,Approved,,Provider.pyFirstName,Data-Party,7.21
 Provider.SSN,String,Optional,fake.ssn(),Random,,,,Approved,,Provider.SocialSecurityNumber,PegaHC-Data-Party-Provider,7.21
 Provider.dateofBirth,String,Optional,fake.past_datetime(),Random,,,,Approved,,Provider.DateOfBirth,PegaHC-Data-Party-Provider,7.21
 Provider.dateofDeath,String,Optional,"fake.future_datetime(end_date=""+20y"")",Random,,,,Approved,,Provider.DateOfDeath,PegaHC-Data-Party,7.21
@@ -47,3 +47,13 @@ Provider.hospitalAdmittingPrivileges().endDate,date,Optional,"fake.future_dateti
 Provider.status,String,Optional,"fake.random_element(('Active', 'Inactive'))","Active, Inactive",,,,Approved,,Provider.Status,PegaHC-Data-,7.21
 Provider.militaryDuty,True/False,Optional,fake.boolean(chance_of_getting_true=5),"True, False",,,,Approved,,Provider.MilitaryDuty,PegaHC-Data-Party-Provider,7.21
 Provider.businessAffiliation().ProviderID,String,Required,"ID(""P-"")","""P-"" + Incremental 1 - 10000",,,,Approved,,Provider.pyWorkPartyUri,Data-Party,7.21
+Provider.meta.pxCommitDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Provider.meta.pxCreateDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Provider.meta.pxCreateOperatorxs,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Provider.meta.pxCreateSystemID,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Provider.meta.pxSaveDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Provider.meta.pxUpdateDateTime,date,Optional,fake.past_datetime(),Random,,,,Approved,,,,7.21
+Provider.meta.pxUpdateOperator,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Provider.meta.pxUpdateOpName,String,Optional,"fake.random_element(('Insert', 'Update', 'Delete'))","Insert, Update, Delete",,,,Approved,,,,7.21
+Provider.meta.pxUpdateSystemID,Integer,Optional,"str(fake.random_int(min=1, max=400))",1 - 400,,Operator,,Approved,,,,7.21
+Provider.meta.pxCreateOpName,String,Optional,"fake.random_element(('Insert', 'Update', 'Delete'))","Insert, Update, Delete",,,,Approved,,,,7.21

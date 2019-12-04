@@ -17,7 +17,7 @@ var tempCol = null;
 // App constants
 const updateMessage = {
 	"pxUpdateDateTime" : Date.now(),
-	"pxUpdateOperator" : randomNum(1000),
+	"pxUpdateOperator" : randomNum(500000),
 	"pxUpdateOpName" : "update",
 	"pxUpdateSystemID" : randomNum(1000)
     };
@@ -38,59 +38,86 @@ MongoClient.connect(srv, function(err, client) {
 module.exports = {
     member: {
         get: function(request, response) {
-            memberCol.findOne({"data.Member.ID":"M-" + request.params.id}, function(err, result) {
-                console.log('Found member: ' + result._id);
+            var id = randomNum(request.params.id);
+            memberCol.findOne({"data.Member.ID":"M-" + id}, function(err, result) {
+                if (result) {
+                    console.log('Found member: ' + result._id);
+                } else {
+                    console.log('Member not found...');
+                }
             });
 
-            response.send('getting member: ' + request.params.id);
+            response.send('getting member: ' + id);
         },
         update: function(request, response) {
-            memberCol.updateOne({"data.Member.ID":"M-" + request.params.id}, {$push : {operatorHistory : updateMessage}});
-            response.send('updated member: ' + request.params.id);
+            var id = randomNum(request.params.id);
+            memberCol.updateOne({"data.Member.ID":"M-" + id}, {$push : {operatorHistory : updateMessage}});
+            response.send('updated member: ' + id);
         }
     },
     claim: {
         get: function(request, response) {
-            claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + request.params.id}, function(err, result) {
-                console.log('Found claim: ' + result._id);
+            var id = randomNum(request.params.id);
+            claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + id}, function(err, result) {
+               if (result) {
+                   console.log('Found claim: ' + result._id);
+                } else {
+                    console.log('Claim not found...');
+                }
             });
 
-            response.send('getting claim: ' + request.params.id);
+            response.send('getting claim: ' + id);
         },
         update: function(request, response) {
-            claimCol.updateOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + request.params.id}, {$push : {operatorHistory : updateMessage}});
-            response.send('updated claim: ' + request.params.id);
+            var id = randomNum(request.params.id);
+            claimCol.updateOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + id}, {$push : {operatorHistory : updateMessage}});
+            response.send('updated claim: ' + id);
         },
         add: function(request, response) {
-            var claimTemplate = getClaimTemplate(request.params.id);
+            // create a random guid claim id
+            var uuid = uuidv4();
+            // console.log(uuid);
+            var claimTemplate = getClaimTemplate('X-' + uuid);
             tempCol.insertOne(claimTemplate);
-            response.send('added claim: ' + request.params.id);
+            response.send('added claim: ' + uuid);
         }
     },
     provider: {
         get: function(request, response) {
-            providerCol.findOne({"data.Provider.ID":"P-" + request.params.id}, function(err, result) {
-                console.log('Found provider: ' + result._id);
+            var id = randomNum(request.params.id);
+            providerCol.findOne({"data.Provider.ID":"P-" + id}, function(err, result) {
+               if (result) {
+                   console.log('Found provider: ' + result._id);
+                } else {
+                    console.log('Provider not found...');
+                }
             });
 
-            response.send('getting provider: ' + request.params.id);        
+            response.send('getting provider: ' + id);        
         },
         update: function(request, response) {
-            providerCol.updateOne({"data.Provider.ID":"P-" + request.params.id}, {$push : {operatorHistory : updateMessage}});
-            response.send('updated provider: ' + request.params.id);
+            var id = randomNum(request.params.id);
+            providerCol.updateOne({"data.Provider.ID":"P-" + id}, {$push : {operatorHistory : updateMessage}});
+            response.send('updated provider: ' + id);
         }
     },
     memberPolicy: {
         get: function(request, response) {
-            memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + request.params.id}, function(err, result) {
-                console.log('Found member policy based on member id: ' + result._id);
+            var id = randomNum(request.params.id);
+            memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + id}, function(err, result) {
+               if (result) {
+                   console.log('Found member policy based on member id: ' + result._id);
+                } else {
+                    console.log('Member policy not found...');
+                }
             });
 
-            response.send('getting member policy by memberId: ' + request.params.id);
+            response.send('getting member policy by memberId: ' + id);
         },
         update: function(request, response) {
-            memberPolicyCol.updateOne({"data.MemberPolicy.MemberID":"M-" + request.params.id}, {$push : {operatorHistory : updateMessage}});
-            response.send('updated member policy by memberId: ' + request.params.id);
+            var id = randomNum(request.params.id);
+            memberPolicyCol.updateOne({"data.MemberPolicy.MemberID":"M-" + id}, {$push : {operatorHistory : updateMessage}});
+            response.send('updated member policy by memberId: ' + id);
         }
     }
 }
@@ -98,6 +125,13 @@ module.exports = {
 // returns a random number from 1 to max (inclusive)
 function randomNum(max) {
     return Math.floor(Math.random() * max) + 1;
+}
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }
 
 function getClaimTemplate(claimId) {

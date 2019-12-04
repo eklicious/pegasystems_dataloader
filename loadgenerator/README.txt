@@ -1,0 +1,11 @@
+build the package by running 
+zip -r --exclude=node_modules/* loadgenerator.zip .
+Move this elsewhere to upload to beanstalk.
+Everything needs to run using node 10.17 and not 11+
+I had to create a .npmrc file to get past some node-sass error about making a directory
+When configuring EB, you need to select the appropriate security group and pem key access if you want to troubleshoot.
+Need to add VPC too for anything that's not t1.micro
+They also say to use t3.small and not t1.micro
+You also need to make sure the security group for beanstalk instance allows for port 3000
+Remove Nginx web server from EB
+Change the npm start command to be npm start else it won't launch the right node process

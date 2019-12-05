@@ -12,13 +12,11 @@ var memberNm = process.env.MEMBER;
 var memberPolicyNm = process.env.MEMBERPOLICY;
 // const providerNm = "provider";
 var providerNm = process.env.PROVIDER;
-const tempNm = "temp";
 
 var claimCol = null;
 var memberPolicyCol = null;
 var memberCol = null;
 var providerCol = null;
-var tempCol = null;
 
 // App constants
 const updateMessage = {
@@ -38,7 +36,6 @@ MongoClient.connect(srv, function(err, client) {
   memberCol = client.db(db).collection(memberNm);
   memberPolicyCol = client.db(db).collection(memberPolicyNm);
   providerCol = client.db(db).collection(providerNm);
-  tempCol = client.db(db).collection(tempNm);
 });
 
 module.exports = {
@@ -84,7 +81,7 @@ module.exports = {
             var uuid = uuidv4();
             // console.log(uuid);
             var claimTemplate = getClaimTemplate('X-' + uuid, request.params.id);
-            tempCol.insertOne(claimTemplate);
+            claimCol.insertOne(claimTemplate);
             response.send('added claim: ' + uuid);
         }
     },

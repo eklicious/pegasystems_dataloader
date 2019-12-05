@@ -37,6 +37,17 @@ On your first usage of the scripts, install required libraries:
 # pip install -r requirements.txt
 ```
 
+For AWS EC2 setup, here are the commands I ran to get running.
+    5  sudo yum install python3
+    6  python3
+    7  curl -O https://bootstrap.pypa.io/get-pip.py
+    8  python3 get-pip.py --user
+   10  pip --version
+    exit shell and scp demo.zip...
+   13  unzip demo.zip
+   14  cd demo
+   23  pip install -r requirements.txt --user
+
 Generate fake memeber records, one per line, by running:
 
 Note that the fake data expects the following:

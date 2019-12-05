@@ -1,12 +1,17 @@
 // Retrieve
 const MongoClient = require('mongodb').MongoClient;
-//const srv = "mongodb+srv://<username>:<password>@<srv>/test?retryWrites=true&w=majority";
+// const srv = "mongodb+srv://<username>:<password>@<srv>/test?retryWrites=true&w=majority";
 var srv = process.env.SRV;
-const db = "pegasystems";
-const claimNm = "claim";
-const memberNm = "member";
-const memberPolicyNm = "member_policy";
-const providerNm = "provider";
+// const db = "pegasystems";
+var db = process.env.DB;
+// const claimNm = "claim";
+var claimNm = process.env.CLAIM;
+// const memberNm = "member";
+var memberNm = process.env.MEMBER;
+// const memberPolicyNm = "member_policy";
+var memberPolicyNm = process.env.MEMBERPOLICY;
+// const providerNm = "provider";
+var providerNm = process.env.PROVIDER;
 const tempNm = "temp";
 
 var claimCol = null;

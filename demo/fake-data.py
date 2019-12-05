@@ -94,7 +94,7 @@ for N in range(0, num_records): # iterate through the loop count
             for row in propreader:
                 path = row[0].split('.')
                 partial = procpath(path, counts, row[3])
-                print(partial)
+                # print(partial)
                 # Merge partial trees.
                 data = merger.merge(data, partial)
         data = list(data.values())[0]

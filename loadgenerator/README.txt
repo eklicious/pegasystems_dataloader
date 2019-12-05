@@ -1,3 +1,4 @@
+MAKE SURE TO UPDATE ROUTES/PEGA.JS WITH THE CORRECT DB SRV!
 build the package by running 
 zip -r --exclude=node_modules/* loadgenerator.zip .
 Move this elsewhere to upload to beanstalk.
@@ -9,3 +10,9 @@ They also say to use t3.small and not t1.micro
 You also need to make sure the security group for beanstalk instance allows for port 3000
 Remove Nginx web server from EB
 Change the npm start command to be npm start else it won't launch the right node process
+Make sure to set the environment variable SRV, e.g. export SRV=mongodb+srv://<user>:<password>@<srv>/test?retryWrites=true
+So the pega route can use this variable to connect to the db
+
+load.sh is a single script that will loop through the standard set of operations in a single thread.
+loadmulti.sh will spawn off numerous threads of load.sh
+

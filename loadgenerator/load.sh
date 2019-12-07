@@ -9,13 +9,13 @@
 
 for i in $(seq 1 $2)
 do
-    curl --request GET $1/pega/member/$4
-    curl --request GET $1/pega/member/update/$4
-    curl --request GET $1/pega/claim/$5
-    curl --request GET $1/pega/claim/update/$5
-    curl --request GET $1/pega/claim/add/$3
-    curl --request GET $1/pega/provider/$6
-    curl --request GET $1/pega/provider/update/$6
-    curl --request GET $1/pega/memberPolicy/$7
-    curl --request GET $1/pega/memberPolicy/update/$7
+    curl --output /dev/null --silent --request GET $1/pega/member/$4
+    curl --output /dev/null --silent --request GET $1/pega/member/update/$4
+    curl --output /dev/null --silent --request GET $1/pega/claim/$5
+    curl --output /dev/null --silent --request GET $1/pega/claim/update/$5
+    curl --output /dev/null --silent --request GET $1/pega/claim/add/$3
+    curl --output /dev/null --silent --request GET $1/pega/provider/$6
+    curl --output /dev/null --silent --request GET $1/pega/provider/update/$6
+    curl --output /dev/null --silent --request GET $1/pega/memberPolicy/$7
+    curl --output /dev/null --silent --request GET $1/pega/memberPolicy/update/$7
 done

@@ -1,0 +1,19 @@
+
+const databaseName = "test_pega";
+var db = db.getSiblingDB(databaseName);
+
+var claimsCol = db.getCollection("claims");
+var membersPoliciesCol = db.getCollection("memberpolicies");
+var membersCol = db.getCollection("members");
+var providersCol = db.getCollection("providers");
+
+const aggQuery = [
+    {
+	$match : {
+	    
+	}
+    }
+
+];
+
+var resultsCur = db.claimsCol.aggregate()

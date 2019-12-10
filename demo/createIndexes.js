@@ -11,6 +11,18 @@ function createIndexes() {
     providersCol.createIndex({"data.Provider.Address.Address.Coordinates": "2dsphere"});
 }
 
+function createAggIndexes() {
+    claimsCol.createIndex({
+	"data.Claim.ClaimHeader.ClaimHeader.PrincipalDiagnosis" : 1,
+	"data.Claim.ClaimHeader.ClaimHeader.ClaimStatus" :  1,
+	"data.Claim.ClaimHeader.ClaimHeader.ClaimType" : 1,
+	"data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : 1,
+	"data.Claim.ClaimHeader.ClaimHeader.AttendingProvider.AttendingProvider.ID": 1
+    },
+			  { name : "claimMemberLookupIndex"}
+			 );
+}
+
 
 var claimsCol = db.getCollection("claims");
 var membersPoliciesCol = db.getCollection("memberpolicies");
@@ -18,6 +30,7 @@ var membersCol = db.getCollection("members");
 var providersCol = db.getCollection("providers");
 
 createIndexes();
+createAggIndexes();
 
 db.createView("vw_member", "members", [{
     $project: {

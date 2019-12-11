@@ -1,3 +1,18 @@
+
+var databaseName = "test_pega";
+var db = db.getSiblingDB(databaseName);
+
+var claimsCol = db.getCollection("claims");
+
+function timeQuery (query) {
+    var start = new Date();
+    var cursor = query();
+    var end = new Date();
+    var duration = end - start;
+    print("Execution time: " + duration);
+    return duration;
+}
+
 var pipeline = 
 [{$match: {
   "data.Claim.ClaimHeader.ClaimHeader.PrincipalDiagnosis" : "1"
@@ -11,15 +26,6 @@ var pipeline =
   claims : {$size : 2}
 }}];
 
-function timeQuery (query) {
-    var start = new Date();
-    var cursor = query();
-    var end = new Date();
-    var duration = end - start;
-    print("Execution time: " + duration);
-    return duration;
-}
-
 timeQuery(function () {
-    return db.claims.aggregate(pipeline);
+    return claimsCol.aggregate(pipeline);
 });

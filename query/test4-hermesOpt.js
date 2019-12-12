@@ -34,4 +34,6 @@ var pipeline =
   }
 }}, {$out: 'testClaimUpdate'}]
 
+{ $merge: { into: "mergeTest", on: "_id", whenMatched: "replace", whenNotMatched: "insert" } }
+
 db.claims.aggregate(pipeline)

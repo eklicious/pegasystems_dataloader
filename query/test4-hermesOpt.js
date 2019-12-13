@@ -1,39 +1,63 @@
 //Enriches claim documents with member information
 
-var pipeline =
-[{$match: {
-  "data.Claim.ClaimHeader.ClaimHeader.ClaimType" : "Medical",
-		"data.Claim.ClaimHeader.ClaimHeader.ClaimStatus" :  "100",
-		"data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : "Pharmacy",
-    "data.Claim.ClaimHeader.ClaimHeader.PrincipalDiagnosis" : "29954",
-    "data.Claim.ClaimHeader.ClaimHeader.AttendingProvider.AttendingProvider.ID" : {"$gte" : "P-76000", "$lt" : "P-77000"},
-    "data.Claim.ClaimHeader.ClaimHeader.PriorAuthorization" : true,
-    "data.Claim.ClaimLine.ClaimLine.Payment.Payment.CoinsuranceAmount" : {"$lt" : 1000}
-}}, {$lookup: {
+const databaseName = "test_pega";
+var db = db.getSiblingDB(databaseName);
 
+var claimsCol = db.getCollection("claims");
+
+function timeQuery (query) {
+    var start = new Date();
+    var cursor = query();
+    var end = new Date();
+    var duration = end - start;
+    print("Execution time: " + duration);
+    return duration;
+}
+
+var pipeline = [
+    {
+	$match: {
+	    "data.Claim.ClaimHeader.ClaimHeader.ClaimType" : "Medical",
+	    "data.Claim.ClaimHeader.ClaimHeader.ClaimStatus" : "100",
+	    "data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : "Worksite",
+	    "data.Claim.Meta.Meta.PxCreateOperatorxs" : "29"
+	}
+    },
+    {
+	$lookup: {
 	    from: "members",
 	    localField : "data.Claim.ClaimHeader.ClaimHeader.Subscriber.Subscriber.ID",
 	    foreignField : "data.Member.ID",
 	    as: "relMembers"
-
-  }}, {$match: {
-  "relMembers.data.Member.Ethnicity" : "Hispanic",
-  "relMembers.data.Member.MaritialStatus" : "Single",
-  	"relMembers.data.Member.CitizenshipStatusCode" : "Foreign Worker"
-}}, {$addFields: {
-  memberInfo: {
-    $let : {
-      vars: {member : {"$arrayElemAt" : ["$relMembers", 0]}},
-      in: {
-        First: "$$member.data.Member.PyFirstName",
-        Last: "$$member.data.Member.PyLastName",
-        Middle: "$$member.data.Member.PyMiddleName",
-        Gender: "$$member.data.Member.Gender"
-      }
+	}
+    },
+    {
+	$addFields: {
+	    memberInfo: {
+		$let : {
+		    vars: {member : {"$arrayElemAt" : ["$relMembers", 0]}},
+			in: {
+			    First: "$$member.data.Member.PyFirstName",
+			    Last: "$$member.data.Member.PyLastName",
+			    Middle: "$$member.data.Member.PyMiddleName",
+			    Gender: "$$member.data.Member.Gender"
+			}
+		}
+	    }
+	}
+    },
+    {
+	$project: {
+	    relMembers: 0
+	}
+    },
+    {
+	$out: 'testClaimUpdate'
     }
-  }
-}}, {$out: 'testClaimUpdate'}]
+];
 
-{ $merge: { into: "mergeTest", on: "_id", whenMatched: "replace", whenNotMatched: "insert" } }
+//{ $merge: { into: "mergeTest", on: "_id", whenMatched: "replace", whenNotMatched: "insert" } }
 
-db.claims.aggregate(pipeline)
+timeQuery(function () {
+    return claimsCol.aggregate(pipeline)
+})

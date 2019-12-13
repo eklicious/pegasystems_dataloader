@@ -32,9 +32,7 @@ function createAggIndexes() {
 	"data.Claim.Meta.Meta.PxCreateOperatorxs" : 1
     },
 			  {
-			      name : "claimMemberLookupIndex",
-			      background: true
-			  }
+			      name : "claimMemberLookupIndex" }
 			 );
 }
 

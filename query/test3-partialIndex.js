@@ -14,12 +14,14 @@ function timeQuery (query) {
 }
 timeQuery(function() {
     return claimsCol.createIndex(
-	{ "data.Claim.ClaimHeader.ClaimHeader.PrincipalDiagnosis" : 1 },
+	{ "data.Claim.ClaimHeader.ClaimHeader.RenderingProvider.RenderingProvider.ID" : 1}, 
 	{
 	    partialFilterExpression: {
-		"data.Claim.ClaimHeader.ClaimHeader.ClaimStatus": { $lt: "10" },
+		"data.Claim.ClaimHeader.ClaimHeader.ClaimStatus": { $lt: "1550" },
 		"data.Claim.ClaimHeader.ClaimHeader.ClaimType" : "Medical"
-	    }
+	    },
+	    background: true
 	}
     );
 });
+

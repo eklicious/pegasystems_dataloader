@@ -24,26 +24,8 @@ var pipeline = [
 	}
     },
     {
-	$lookup: {
-	    from: "members",
-	    localField : "data.Claim.ClaimHeader.ClaimHeader.Subscriber.Subscriber.ID",
-	    foreignField : "data.Member.ID",
-	    as: "relMembers"
-	}
-    },
-    {
 	$addFields: {
-	    memberInfo: {
-		$let : {
-		    vars: {member : {"$arrayElemAt" : ["$relMembers", 0]}},
-			in: {
-			    First: "$$member.data.Member.PyFirstName",
-			    Last: "$$member.data.Member.PyLastName",
-			    Middle: "$$member.data.Member.PyMiddleName",
-			    Gender: "$$member.data.Member.Gender"
-			}
-		}
-	    },
+	    "data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : "Native American Health"
 	}
     },
     {

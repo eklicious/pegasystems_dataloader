@@ -17,8 +17,9 @@ var pipeline = [
 	$match: {
 	    "data.Claim.ClaimHeader.ClaimHeader.ClaimType" : "Medical",
 	    "data.Claim.ClaimHeader.ClaimHeader.ClaimStatus" : "100",
-	    "data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : "Worksite",
-	    "data.Claim.Meta.Meta.PxCreateOperatorxs" : "29"
+	    "data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : "Telehhealth",
+	    "data.Claim.Meta.Meta.PxCreateOperatorxs" : {$gt : "29", $lt: "31"}
+/*	    "data.Claim.Meta.Meta.PxCreateOperatorxs" : "29"  */
 	}
     },
     {
@@ -47,6 +48,7 @@ var pipeline = [
 	    path: "$relPolicies"
 	}
     },
+
     {
 	$project: {
 	    "data.Claim.ClaimHeader.ClaimHeader.ClaimID" : 1,
@@ -78,9 +80,20 @@ var pipeline = [
 	    "Policy.SelectedPlan" : "$relPolicies.data.MemberPolicy.SelectedPlan" 
 	}
     },
-    {$limit: 20}
+    {
+	$sort : {"data.Claim.ClaimHeader.ClaimHeader.ClaimID" : 1}
+    },
+    {$limit : 50}
+ /*   {$skip: 50},
+    {$limit: 50}
+*/
 ];
+
 
 timeQuery(function() {
     return claimsCol.aggregate(pipeline);
 })
+
+/*
+printjson(claimsCol.aggregate(pipeline, {explain : true}))
+*/

@@ -26,8 +26,8 @@ function createIndexes() {
 
 function createAggIndexes() {
     claimsCol.createIndex({
-	"data.Claim.ClaimHeader.ClaimHeader.ClaimType" : 1,
 	"data.Claim.ClaimHeader.ClaimHeader.ClaimStatus" : 1,
+	"data.Claim.ClaimHeader.ClaimHeader.ClaimType" : 1,
 	"data.Claim.ClaimHeader.ClaimHeader.PlaceOfService" : 1,
 	"data.Claim.Meta.Meta.PxCreateOperatorxs" : 1
     },

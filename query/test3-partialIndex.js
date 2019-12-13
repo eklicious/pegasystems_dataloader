@@ -15,6 +15,11 @@ function timeQuery (query) {
 timeQuery(function() {
     return claimsCol.createIndex(
 	{ "data.Claim.ClaimHeader.ClaimHeader.PrincipalDiagnosis" : 1 },
-	{ partialFilterExpression: { "data.Claim.ClaimHeader.ClaimHeader.ClaimStatus": { $lt:10 } } }
+	{
+	    partialFilterExpression: {
+		"data.Claim.ClaimHeader.ClaimHeader.ClaimStatus": { $lt: "10" },
+		"data.Claim.ClaimHeader.ClaimHeader.ClaimType" : "Medical"
+	    }
+	}
     );
 });

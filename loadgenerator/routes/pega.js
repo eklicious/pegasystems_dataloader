@@ -1,6 +1,6 @@
 // Retrieve
 const MongoClient = require('mongodb').MongoClient;
-// const srv = "mongodb+srv://<username>:<password>@<srv>/test?retryWrites=true&w=majority";
+// const srv = "mongodb+srv://<username>:<password>@<srv>/test?readPreference=secondary&retryWrites=true&w=majority";
 var srv = process.env.SRV;
 // const db = "pegasystems";
 var db = process.env.DB;

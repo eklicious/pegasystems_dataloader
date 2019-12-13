@@ -13,18 +13,25 @@ function timeQuery (query) {
     return duration;
 }
 
-var pipeline = 
-[{$match: {
-  "data.Claim.ClaimHeader.ClaimHeader.PrincipalDiagnosis" : "1"
-}}, {$group: {
-  _id: "$data.Claim.ClaimHeader.ClaimHeader.AttendingProvider.AttendingProvider.ID",
-  totalPayment: {
-    $sum: "$data.Claim.ClaimHeader.ClaimHeader.Payment.Payment.PaidAmount"
-  },
-  claims: {$addToSet : "$data.Claim.ClaimHeader.ClaimHeader.ClaimID"}
-}}, {$match: {
-  claims : {$size : 2}
-}}];
+var pipeline = [
+    {
+	$match: {
+	    "data.Claim.ClaimHeader.ClaimHeader.ClaimStatus" : "1",
+	    "data.Claim.ClaimHeader.ClaimHeader.ClaimType" : "Medical" 
+	}
+    },
+    {
+	$group: {
+	    _id: "$data.Claim.ClaimHeader.ClaimHeader.AttendingProvider.AttendingProvider.ID",
+	    totalPayment: {
+		$sum: "$data.Claim.ClaimHeader.ClaimHeader.Payment.Payment.PaidAmount"
+	    },
+	    claims: {
+		$addToSet : "$data.Claim.ClaimHeader.ClaimHeader.ClaimID"
+	    }
+	}
+    }
+];
 
 timeQuery(function () {
     return claimsCol.aggregate(pipeline);

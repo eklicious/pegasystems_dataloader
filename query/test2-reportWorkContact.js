@@ -1,3 +1,7 @@
+/*
+OLD VERSION DO NOT DEMO 
+*/
+
 const databaseName = "test_pega";
 var db = db.getSiblingDB(databaseName);
 

@@ -92,6 +92,38 @@ db.createView("vw_claim", "claims", [{
     }
 }])
 
+db.createView("Claim4WayJoinView", "claims", 
+[{$match: {
+  'data.Claim.ClaimHeader.ClaimHeader.ClaimType': 'Medical',
+  'data.Claim.ClaimHeader.ClaimHeader.ClaimStatus': '100',
+  'data.Claim.ClaimHeader.ClaimHeader.PlaceOfService': 'Telehhealth',
+  'data.Claim.Meta.Meta.PxCreateOperatorxs': {
+    $gt: '29',
+    $lt: '31'
+  }
+}}, {$lookup: {
+  from: 'members',
+  localField: 'data.Claim.ClaimHeader.ClaimHeader.Subscriber.Subscriber.ID',
+  foreignField: 'data.Member.ID',
+  as: 'relMembers'
+}}, {$unwind: {
+  path: '$relMembers'
+}}, {$lookup: {
+  from: 'memberpolicies',
+  localField: 'data.Claim.ClaimHeader.ClaimHeader.Subscriber.Subscriber.ID',
+  foreignField: 'data.MemberPolicy.MemberID',
+  as: 'relPolicies'
+}}, {$unwind: {
+  path: '$relPolicies'
+}}, {$lookup: {
+  from: 'providers',
+  localField: 'data.Claim.ClaimHeader.ClaimHeader.RenderingProvider.RenderingProvider.ID',
+  foreignField: 'data.Provider.ID',
+  as: 'relProviders'
+}}, {$unwind: {
+  path: '$relProviders'
+}}, {$limit: 10000}])
+
 db.createView("vw_memberpolicies", "memberpolicies", [
     {
 	$project: {

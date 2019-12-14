@@ -1,6 +1,7 @@
 
 
 
+//var databaseName = "pegaSmall";
 var databaseName = "test_pega";
 var db = db.getSiblingDB(databaseName);
 

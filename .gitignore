@@ -5,3 +5,5 @@ demo/.DS_Store
 demo/.DS_Store
 *.*~
 *.*#
+makeView/node_modules
+makeView/package-lock.json

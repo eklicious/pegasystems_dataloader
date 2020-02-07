@@ -1,22 +1,26 @@
 // Retrieve
 const MongoClient = require('mongodb').MongoClient;
-// const srv = "mongodb+srv://<username>:<password>@<srv>/test?readPreference=secondary&retryWrites=true&w=majority";
+console.log('Launching...');
 var srv = process.env.SRV;
-// const db = "pegasystems";
+console.log('SRV: ' + srv);
 var db = process.env.DB;
-// const claimNm = "claim";
+console.log('DB: ' + db);
 var claimNm = process.env.CLAIM;
-// const memberNm = "member";
+console.log('CLAIM COLLECTION: ' + claimNm);
 var memberNm = process.env.MEMBER;
-// const memberPolicyNm = "member_policy";
+console.log('MEMBER COLLECTION: ' + memberNm);
 var memberPolicyNm = process.env.MEMBERPOLICY;
-// const providerNm = "provider";
+console.log('MEMBER POLICY COLLECTION: ' + memberPolicyNm);
 var providerNm = process.env.PROVIDER;
+console.log('PROVIDER COLLECTION: ' + providerNm);
 
 var claimCol = null;
 var memberPolicyCol = null;
 var memberCol = null;
 var providerCol = null;
+var conflictsCol = null;
+var globalClient = null;
+
 
 // App constants
 const updateMessage = {
@@ -32,10 +36,12 @@ MongoClient.connect(srv, function(err, client) {
   if(!err) {
     console.log("We are connected");
   }
+  globalClient = client;
   claimCol = client.db(db).collection(claimNm);
   memberCol = client.db(db).collection(memberNm);
   memberPolicyCol = client.db(db).collection(memberPolicyNm);
   providerCol = client.db(db).collection(providerNm);
+  conflictsCol = client.db(db).collection("conflicts");
 });
 
 module.exports = {
@@ -43,18 +49,26 @@ module.exports = {
         get: function(request, response) {
             var id = randomNum(request.params.id);
             memberCol.findOne({"data.Member.ID":"M-" + id}, function(err, result) {
-                if (result) {
-                    console.log('Found member: ' + result._id);
-                } else {
-                    console.log('Member not found...');
-                }
+               if (err) return console.log("error: " + err);
+               if (result) {
+                  console.log('Found member: id=' + id);
+               } else {
+                  console.log('Member not found: id=' + id);
+               }
             });
 
             response.send('getting member: ' + id);
         },
         update: function(request, response) {
             var id = randomNum(request.params.id);
-            memberCol.updateOne({"data.Member.ID":"M-" + id}, {$push : {operatorHistory : updateMessage}});
+            memberCol.updateOne({"data.Member.ID":"M-" + id}, {$push : {operatorHistory : updateMessage}}, function(err, result) {
+               if (err) return console.log("error: " + err);
+               if (result) {
+                  console.log('Updated member: id=' + id +',  modified count=' + result.result.nModified);
+               } else {
+                  console.log('Update member not found: id=' + id);
+               }
+            });
             response.send('updated member: ' + id);
         }
     },
@@ -62,18 +76,26 @@ module.exports = {
         get: function(request, response) {
             var id = randomNum(request.params.id);
             claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + id}, function(err, result) {
+               if (err) return console.log("error: " + err);
                if (result) {
-                   console.log('Found claim: ' + result._id);
-                } else {
-                    console.log('Claim not found...');
-                }
+                  console.log('Found claim: id=' + id);
+               } else {
+                  console.log('Claim not found: id=' + id);
+               }
             });
 
             response.send('getting claim: ' + id);
         },
         update: function(request, response) {
             var id = randomNum(request.params.id);
-            claimCol.updateOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + id}, {$push : {operatorHistory : updateMessage}});
+            claimCol.updateOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + id}, {$push : {operatorHistory : updateMessage}}, function(err, result) {
+               if (err) return console.log("error: " + err);
+               if (result) {
+                  console.log('Updated claim: id=' + id +',  modified count=' + result.result.nModified);
+               } else {
+                  console.log('Update claim not found: id=' + id);
+               }
+            });
             response.send('updated claim: ' + id);
         },
         add: function(request, response) {
@@ -81,7 +103,14 @@ module.exports = {
             var uuid = uuidv4();
             // console.log(uuid);
             var claimTemplate = getClaimTemplate('X-' + uuid, request.params.id);
-            claimCol.insertOne(claimTemplate);
+            claimCol.insertOne(claimTemplate, function(err, result) {
+               if (err) return console.log("error: " + err);
+               if (result) {
+                    console.log('Add claim: ' + result._id);
+                } else {
+                    console.log('Add claim error...' + uuid);
+                }
+            });
             response.send('added claim: ' + uuid);
         }
     },
@@ -89,18 +118,26 @@ module.exports = {
         get: function(request, response) {
             var id = randomNum(request.params.id);
             providerCol.findOne({"data.Provider.ID":"P-" + id}, function(err, result) {
+               if (err) return console.log("error: " + err);
                if (result) {
-                   console.log('Found provider: ' + result._id);
-                } else {
-                    console.log('Provider not found...');
-                }
+                  console.log('Found provider: id=' + id);
+               } else {
+                  console.log('Provider not found: id=' + id);
+               }
             });
 
             response.send('getting provider: ' + id);        
         },
         update: function(request, response) {
             var id = randomNum(request.params.id);
-            providerCol.updateOne({"data.Provider.ID":"P-" + id}, {$push : {operatorHistory : updateMessage}});
+            providerCol.updateOne({"data.Provider.ID":"P-" + id}, {$push : {operatorHistory : updateMessage}}, function(err, result) {
+               if (err) return console.log("error: " + err);
+               if (result) {
+                  console.log('Updated provider: id=' + id +',  modified count=' + result.result.nModified);
+               } else {
+                  console.log('Update provider not found: id=' + id);
+               }
+            });
             response.send('updated provider: ' + id);
         }
     },
@@ -108,19 +145,148 @@ module.exports = {
         get: function(request, response) {
             var id = randomNum(request.params.id);
             memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + id}, function(err, result) {
+               if (err) return console.log("error: " + err);
                if (result) {
-                   console.log('Found member policy based on member id: ' + result._id);
-                } else {
-                    console.log('Member policy not found...');
-                }
+                  console.log('Found member policy: memberId=' + id);
+               } else {
+                  console.log('Member policy not found: memberId=' + id);
+               }
             });
 
             response.send('getting member policy by memberId: ' + id);
         },
         update: function(request, response) {
             var id = randomNum(request.params.id);
-            memberPolicyCol.updateOne({"data.MemberPolicy.MemberID":"M-" + id}, {$push : {operatorHistory : updateMessage}});
+            memberPolicyCol.updateOne({"data.MemberPolicy.MemberID":"M-" + id}, {$push : {operatorHistory : updateMessage}}, function(err, result) {
+               if (err) return console.log("error: " + err);
+               if (result) {
+                  console.log('Updated member policy: memberId=' + id +',  modified count=' + result.result.nModified);
+               } else {
+                  console.log('Update member policy not found: memberId=' + id);
+               }
+            });
             response.send('updated member policy by memberId: ' + id);
+        }
+    },
+    transaction: {
+        test: async function(request, response) {
+            var memberId = randomNum(request.params.memberId);
+            var claimId = randomNum(request.params.claimId);
+            var providerId = randomNum(request.params.providerId);
+            console.log('memberId: ' + memberId);
+            console.log('claimId: ' + claimId);
+            console.log('providerId: ' + providerId);
+            
+            const ts = (new Date()).getTime();
+
+            const session = globalClient.startSession();
+            session.startTransaction();
+            try {
+                const opts = { session, returnOriginal: true };
+
+                var oldVersion = null;
+
+                /************************************************************************
+                * Fetch the member doc
+                * Update the last mod ts and version
+                * Update the existing doc with the new doc
+                * If the update isn't successful, audit this in the conflicts collection
+                *************************************************************************/
+                var doc = await memberCol.findOne({"data.Member.ID":"M-" + memberId}, opts);
+                // await console.log(doc);
+                if (doc) {
+                    doc.ts = ts;
+                    oldVersion = doc.version;
+                    doc.version = ((doc.version) ? Number(doc.version) + 1 : 1);
+                    await memberCol.findOneAndReplace({"data.Member.ID":"M-" + memberId, "version":oldVersion}, doc, opts, function(err, result) {
+                        if (err) return console.log("memberCol.findOneAndReplace error: " + err);
+                            if (result.lastErrorObject && result.lastErrorObject.n===1) {
+                                console.log('Updated member: id=' + memberId + ', cnt=' + result.lastErrorObject.n);
+                            } else {
+                                console.log('Update member conflict: id=' + memberId + ', oldVersion=' + oldVersion);
+                                conflictsCol.insertOne({"collection":memberNm, "id":memberId, "version":oldVersion});
+                            }
+                         });
+                } else {
+                    console.log("Member not found: id=" + memberId);
+                }
+
+                /************************************************************************
+                * Repeat now for claims
+                *************************************************************************/
+                doc = await claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId}, opts);
+                if (doc) {
+                    doc.ts = ts;
+                    oldVersion = doc.version;
+                    doc.version = ((doc.version) ? Number(doc.version) + 1 : 1);
+                    await claimCol.findOneAndReplace({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId, "version":oldVersion}, doc, opts, function(err, result) {
+                        if (err) return console.log("claimCol.findOneAndReplace error: " + err);
+                            if (result.lastErrorObject && result.lastErrorObject.n===1) {
+                                console.log('Updated claim: id=' + claimId + ', cnt=' + result.lastErrorObject.n);
+                            } else {
+                                console.log('Update claim conflict: id=' + claimId + ', oldVersion=' + oldVersion);
+                                conflictsCol.insertOne({"collection":claimNm, "id":claimId, "version":oldVersion});
+                            }
+                         });
+                } else {
+                    console.log("Claim not found: id=" + claimId);
+                }
+
+                /************************************************************************
+                * Repeat now for provider
+                *************************************************************************/
+                doc = await providerCol.findOne({"data.Provider.ID":"P-" + providerId}, opts);
+                if (doc) {
+                    doc.ts = ts;
+                    oldVersion = doc.version;
+                    doc.version = ((doc.version) ? Number(doc.version) + 1 : 1);
+                    await providerCol.findOneAndReplace({"data.Provider.ID":"P-" + providerId, "version":oldVersion}, doc, opts, function(err, result) {
+                        if (err) return console.log("providerCol.findOneAndReplace error: " + err);
+                            if (result.lastErrorObject && result.lastErrorObject.n===1) {
+                                console.log('Updated provider: id=' + providerId + ', cnt=' + result.lastErrorObject.n);
+                            } else {
+                                console.log('Update provider conflict: id=' + providerId + ', oldVersion=' + oldVersion);
+                                conflictsCol.insertOne({"collection":providerNm, "id":providerId, "version":oldVersion});
+                            }
+                         });
+                } else {
+                    console.log("Provider not found: id=" + providerId);
+                }
+
+                /************************************************************************
+                * Repeat now for member policy
+                *************************************************************************/
+                doc = await memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + memberId}, opts);
+                if (doc) {
+                    doc.ts = ts;
+                    oldVersion = doc.version;
+                    doc.version = ((doc.version) ? Number(doc.version) + 1 : 1);
+                    await memberPolicyCol.findOneAndReplace({"data.MemberPolicy.MemberID":"M-" + memberId, "version":oldVersion}, doc, opts, function(err, result) {
+                        if (err) return console.log("memberPolicyCol.findOneAndReplace error: " + err);
+                            if (result.lastErrorObject && result.lastErrorObject.n===1) {
+                                console.log('Updated member policy: memberId=' + memberId + ', cnt=' + result.lastErrorObject.n);
+                            } else {
+                                console.log('Update member policy conflict: memberId=' + memberId + ', oldVersion=' + oldVersion);
+                                conflictsCol.insertOne({"collection":memberPolicyNm, "id":memberId, "version":oldVersion});
+                            }
+                         });
+                } else {
+                    console.log("Member policy not found: id=" + memberId);
+                }
+
+                await session.commitTransaction();
+                session.endSession();
+            } catch (error) {
+                console.log(error);
+                try {
+                    await session.abortTransaction();
+                } catch (error) {
+                    // do nothing
+                }
+                session.endSession();
+                // throw error; // Rethrow so calling function sees error
+            }
+            response.send('transaction finished for memberId=' + memberId + ', claimId=' + claimId + ', providerId=' + providerId);
         }
     }
 }

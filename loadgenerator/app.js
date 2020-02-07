@@ -36,6 +36,7 @@ app.get('/pega/provider/:id', pegaRouter.provider.get);
 app.get('/pega/provider/update/:id', pegaRouter.provider.update);
 app.get('/pega/memberPolicy/:id', pegaRouter.memberPolicy.get);
 app.get('/pega/memberPolicy/update/:id', pegaRouter.memberPolicy.update);
+app.get('/pega/transaction/:memberId/:claimId/:providerId', pegaRouter.transaction.test);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

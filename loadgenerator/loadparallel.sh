@@ -47,5 +47,5 @@ echo "Getting claims"
 callCurlParallel $1 $2 $3 $4/pega/claim/$7
 echo "Updating claims"
 callCurlParallel $1 $2 $3 $4/pega/claim/update/$7
-# echo "Adding claims"
-# callCurlParallel $1 $2 $3 $4/pega/claim/add/$8
+echo "Adding claims"
+callCurlParallel $1 $2 $3 $4/pega/claim/add/$8

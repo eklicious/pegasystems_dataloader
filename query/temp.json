@@ -1,0 +1,27 @@
+{
+	"_id" : ObjectId("5df1a57376aa33124d2db35c"),
+	"id" : "a173db1c-394a-4b2f-8f57-c24e2e58a8d8",
+	"idempotencyKey" : "529ea5a2-393b-49c5-8325-bfc1442aade5",
+	"version" : "1",
+	"type" : "Provider",
+	"claimAggregates" : {
+		"totalAmount" : 76540,
+		"avgClaimAmt" : 6378.333333333333,
+		"claimCount" : 12,
+		"claims" : [
+			"C-175113829",
+			"C-316402338",
+			"C-356462748",
+			"C-376922600",
+			"C-207789834",
+			"C-282859158",
+			"C-343283521",
+			"C-98783685",
+			"C-213858504",
+			"C-344012492",
+			"C-254414432",
+			"C-504991114"
+		]
+	},
+	"AffiliatedProviderID" : "P-670645"
+}

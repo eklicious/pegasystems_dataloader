@@ -1,4 +1,3 @@
-
 const databaseName = "test_pega";
 var db = db.getSiblingDB(databaseName);
 
@@ -134,5 +133,3 @@ db.createView("vw_memberpolicies", "memberpolicies", [
 	}
     }
 ])
-
-

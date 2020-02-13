@@ -32,7 +32,7 @@ const updateMessage = {
 
 
 // Connect to the db
-MongoClient.connect(srv, { poolSize: 50 }, function(err, client) {
+MongoClient.connect(srv, function(err, client) {
   if(!err) {
     console.log("We are connected");
   }
@@ -178,16 +178,10 @@ module.exports = {
             console.log('providerId: ' + providerId);
 
             // Fetch docs outside of the transaction block and use secondary
-            // var memberDoc = await memberCol.findOne({"data.Member.ID":"M-" + memberId});
-            // var claimDoc = await claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId});            
-            // var providerDoc = await providerCol.findOne({"data.Provider.ID":"P-" + providerId});
-            // var memberPolicyDoc = await memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + memberId}); 
-
-var [memberDoc, claimDoc, providerDoc, memberPolicyDoc ] = await Promise.all([
-		memberCol.findOne({"data.Member.ID":"M-" + memberId}),
-		claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId}),
-		providerCol.findOne({"data.Provider.ID":"P-" + providerId}),
-		memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + memberId})]);
+            var memberDoc = await memberCol.findOne({"data.Member.ID":"M-" + memberId});
+            var claimDoc = await claimCol.findOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId});            
+            var providerDoc = await providerCol.findOne({"data.Provider.ID":"P-" + providerId});
+            var memberPolicyDoc = await memberPolicyCol.findOne({"data.MemberPolicy.MemberID":"M-" + memberId}); 
 
             const ts = (new Date()).getTime();
 
@@ -210,9 +204,9 @@ var [memberDoc, claimDoc, providerDoc, memberPolicyDoc ] = await Promise.all([
                     memberDoc.version = ((memberDoc.version) ? Number(memberDoc.version) + 1 : 1);
                     var result = null;
                     try {
-                        result = await memberCol.findOneAndReplace({"data.Member.ID":"M-" + memberId, "version":oldVersion}, memberDoc, opts);
-                        if (result.lastErrorObject && result.lastErrorObject.n===1) {
-                            console.log('Updated member: id=' + memberId + ', cnt=' + result.lastErrorObject.n);
+result = await memberCol.updateOne({"data.Member.ID":"M-" + memberId}, {$push : {operatorHistory : updateMessage}}, opts);
+                        if (result.result && result.result.nModified===1) {
+                            console.log('Updated member: id=' + memberId + ', cnt=' + result.result.n);
                         } else {
                             console.log('Update member conflict: id=' + memberId + ', oldVersion=' + oldVersion);
                             conflictsCol.insertOne({"collection":memberNm, "id":memberId, "version":oldVersion});
@@ -233,9 +227,9 @@ var [memberDoc, claimDoc, providerDoc, memberPolicyDoc ] = await Promise.all([
                     claimDoc.version = ((claimDoc.version) ? Number(claimDoc.version) + 1 : 1);
                     var result = null;
                     try {
-                        result = await claimCol.findOneAndReplace({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId, "version":oldVersion}, claimDoc, opts);
-                        if (result.lastErrorObject && result.lastErrorObject.n===1) {
-                            console.log('Updated claim: id=' + claimId + ', cnt=' + result.lastErrorObject.n);
+                        result = await claimCol.updateOne({"data.Claim.ClaimHeader.ClaimHeader.ClaimID":"C-" + claimId}, {$push : {operatorHistory : updateMessage}}, opts);
+                        if (result.result && result.result.nModified===1) {
+                            console.log('Updated claim: id=' + claimId + ', cnt=' + result.result.n);
                         } else {
                             console.log('Update claim conflict: id=' + claimId + ', oldVersion=' + oldVersion);
                             conflictsCol.insertOne({"collection":claimNm, "id":claimId, "version":oldVersion});
@@ -256,9 +250,9 @@ var [memberDoc, claimDoc, providerDoc, memberPolicyDoc ] = await Promise.all([
                     providerDoc.version = ((providerDoc.version) ? Number(providerDoc.version) + 1 : 1);
                     var result = null;
                     try {
-                        result = await providerCol.findOneAndReplace({"data.Provider.ID":"P-" + providerId, "version":oldVersion}, providerDoc, opts);
-                        if (result.lastErrorObject && result.lastErrorObject.n===1) {
-                            console.log('Updated provider: id=' + providerId + ', cnt=' + result.lastErrorObject.n);
+                        result = await providerCol.updateOne({"data.Provider.ID":"P-" + providerId}, {$push : {operatorHistory : updateMessage}}, opts);
+                        if (result.result && result.result.nModified===1) {
+                            console.log('Updated provider: id=' + providerId + ', cnt=' + result.result.n);
                         } else {
                             console.log('Update provider conflict: id=' + providerId + ', oldVersion=' + oldVersion);
                             conflictsCol.insertOne({"collection":providerNm, "id":providerId, "version":oldVersion});
@@ -280,9 +274,9 @@ var [memberDoc, claimDoc, providerDoc, memberPolicyDoc ] = await Promise.all([
                     memberPolicyDoc.version = ((memberPolicyDoc.version) ? Number(memberPolicyDoc.version) + 1 : 1);
                     var result = null;
                     try {
-                        result = await memberPolicyCol.findOneAndReplace({"data.MemberPolicy.MemberID":"M-" + memberId, "version":oldVersion}, memberPolicyDoc, opts);
-                        if (result.lastErrorObject && result.lastErrorObject.n===1) {
-                            console.log('Updated member policy: id=' + memberId + ', cnt=' + result.lastErrorObject.n);
+                        result = await memberPolicyCol.updateOne({"data.MemberPolicy.MemberID":"M-" + memberId}, {$push : {operatorHistory : updateMessage}}, opts);
+                        if (result.result && result.result.nModified===1) {
+                            console.log('Updated member policy: id=' + memberId + ', cnt=' + result.result.n);
                         } else {
                             console.log('Update member policy conflict: id=' + memberId + ', oldVersion=' + oldVersion);
                             conflictsCol.insertOne({"collection":memberPolicyNm, "id":memberId, "version":oldVersion});

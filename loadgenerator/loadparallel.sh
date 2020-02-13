@@ -8,14 +8,17 @@
 # Param 7: max claim id
 # Param 8: claim version id
 # Note that you can kick this job off multiple times to really stress test the system, e.g.
-# ./loadparallel.sh 100 2000 10 http://pega6.us-east-1.elasticbeanstalk.com 500000
-# ./loadparallel.sh 100 2000 10 http://pega6.us-east-1.elasticbeanstalk.com 500000
+# ./loadparallel.sh 100 2000 10 http://pega.us-east-1.elasticbeanstalk.com 1000000 65000000 500000000 1
+# ./loadparallel.sh 100 2000 10 http://pega.us-east-1.elasticbeanstalk.com 1000000 65000000 500000000 1
+
+# Instalation and Setup:
 # For ec2, you can install parallel using http://git.savannah.gnu.org/cgit/parallel.git/tree/README
 # You need to test with -j0 for a single command to see what the VM file limits are and then modify the hard limit to be something higher
 # Follow this to set the file-max and the nofile system params:
 #     https://glassonionblog.wordpress.com/2013/01/27/increase-ulimit-and-file-descriptors-limit/
+#     You will need to run parallel --citation afterwards to get rid of their prompts
 # I set the file-max to be 1000000 and the nofile limit to be 60000 but you are welcome to try different and higher values
-# in the limits.conf, you need to also set nproc so we can adjust ulimit -u later on, e.g.
+# in the limits.conf (copy next 4 lines at bottom of the limits.conf file but remove the # comments), you need to also set nproc so we can adjust ulimit -u later on, e.g.
 #* soft nofile 60000
 #* hard nofile 60000
 #* soft nproc  50000
@@ -31,21 +34,30 @@ callCurlParallel () {
    seq $2 | parallel -j$3 curl ${array[@]} &
 }
 
-echo "Getting providers"
-callCurlParallel $1 $2 $3 $4/pega/provider/$5
-echo "Updating providers"
-callCurlParallel $1 $2 $3 $4/pega/provider/update/$5
-echo "Getting members"
-callCurlParallel $1 $2 $3 $4/pega/member/$6
-echo "Updating members"
-callCurlParallel $1 $2 $3 $4/pega/member/update/$6
-echo "Getting member policies"
-callCurlParallel $1 $2 $3 $4/pega/memberPolicy/$6
-echo "Updating member policies"
-callCurlParallel $1 $2 $3 $4/pega/memberPolicy/update/$6
-echo "Getting claims"
-callCurlParallel $1 $2 $3 $4/pega/claim/$7
-echo "Updating claims"
-callCurlParallel $1 $2 $3 $4/pega/claim/update/$7
-echo "Adding claims"
-callCurlParallel $1 $2 $3 $4/pega/claim/add/$8
+#######################################################
+# Test individual operations
+#######################################################
+# echo "Getting providers"
+# callCurlParallel $1 $2 $3 $4/pega/provider/$5
+# echo "Updating providers"
+# callCurlParallel $1 $2 $3 $4/pega/provider/update/$5
+# echo "Getting members"
+# callCurlParallel $1 $2 $3 $4/pega/member/$6
+# echo "Updating members"
+# callCurlParallel $1 $2 $3 $4/pega/member/update/$6
+# echo "Getting member policies"
+# callCurlParallel $1 $2 $3 $4/pega/memberPolicy/$6
+# echo "Updating member policies"
+# callCurlParallel $1 $2 $3 $4/pega/memberPolicy/update/$6
+# echo "Getting claims"
+# callCurlParallel $1 $2 $3 $4/pega/claim/$7
+# echo "Updating claims"
+# callCurlParallel $1 $2 $3 $4/pega/claim/update/$7
+# echo "Adding claims"
+# callCurlParallel $1 $2 $3 $4/pega/claim/add/$8
+
+#######################################################
+# Test a multidoc transaction that does all ops
+#######################################################
+echo "Testing Multidoc Transactions"
+callCurlParallel $1 $2 $3 $4/pega/transaction/$5/$6/$7
